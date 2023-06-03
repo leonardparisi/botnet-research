@@ -1,5 +1,5 @@
 #define TMPLOG "zombie.log"
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #define GHOSTVER "dot"
 #include "abstract_bot.h"
 #include "encrypt.h"
