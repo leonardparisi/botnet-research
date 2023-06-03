@@ -15,14 +15,14 @@ using namespace				std;
 
 std::string real_ip() {
 
-	HINTERNET net = InternetOpen(L"--",
+	HINTERNET net = InternetOpen("--",
 		INTERNET_OPEN_TYPE_PRECONFIG,
 		NULL,
 		NULL,
 		0);
 
 	HINTERNET conn = InternetOpenUrl(net,
-		L"https://api.ipify.org/",
+		"https://api.ipify.org/",
 		NULL,
 		0,
 		INTERNET_FLAG_RELOAD,

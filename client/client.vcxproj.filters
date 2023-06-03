@@ -15,15 +15,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="abstract_bot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="info_helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ahxrwinsocket\ahxrwinsock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Encryption\encrypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rat_bot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ahxrwinsocket\socket\client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ahxrwinsocket\socket\keywords.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ahxrwinsocket\socket\server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ahxrwinsocket\socket\threads.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="info_helpers.cpp">
+    <ClCompile Include="abstract_bot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zombie.cpp">
+    <ClCompile Include="info_helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -47,7 +47,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CLRSupport>true</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -79,9 +79,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\lenny\OneDrive\Desktop\ghost\additional_headers;C:\Users\lenny\OneDrive\Desktop\ghost\ahxrwinsocket;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
@@ -113,11 +114,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\ahxrwinsocket\ahxrwinsock.h" />
+    <ClInclude Include="..\ahxrwinsocket\socket\client.h" />
+    <ClInclude Include="..\ahxrwinsocket\socket\keywords.h" />
+    <ClInclude Include="..\ahxrwinsocket\socket\server.h" />
+    <ClInclude Include="..\ahxrwinsocket\socket\threads.h" />
+    <ClInclude Include="..\Encryption\encrypt.h" />
     <ClInclude Include="info_helpers.h" />
+    <ClInclude Include="abstract_bot.h" />
+    <ClInclude Include="rat_bot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="info_helpers.cpp" />
-    <ClCompile Include="zombie.cpp" />
+    <ClCompile Include="abstract_bot.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
