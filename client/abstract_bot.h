@@ -13,8 +13,6 @@ public:
 
     virtual void on_client_rec_data(char* data) = 0;
 
-    virtual DWORD ping(LPVOID lpParams);
-
 protected:
     const char* str_host; // server host
 

