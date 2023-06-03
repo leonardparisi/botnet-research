@@ -21,6 +21,7 @@ public:
 
     virtual void on_client_rec_data(char* data)
     {
-        std::cout << "Client received data!" << std::endl;
+        std::cout << "Client received data:" << std::endl;
+        std::cout << data << std::endl;
     }
 };
